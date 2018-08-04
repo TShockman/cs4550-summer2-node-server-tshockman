@@ -22,4 +22,4 @@ mongoose.connect(MONGODB_URI);
 
 require('./services/user.service.server')(app);
 
-app.listen(3001);
+app.listen(PROCESS.ENV.PORT || 3001);
