@@ -3,6 +3,8 @@ const session = require('express-session');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+const MONGODB_URI = process.env.MONGODB_URI;
+
 const app = express();
 
 app.use(cors({origin: true, credentials: true}));
@@ -16,7 +18,7 @@ app.use(session({
 }));
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/webdev-summer2-2018');
+mongoose.connect(MONGODB_URI);
 
 require('./services/user.service.server')(app);
 
