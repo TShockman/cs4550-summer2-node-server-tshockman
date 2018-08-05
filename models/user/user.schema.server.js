@@ -7,5 +7,8 @@ module.exports = mongoose.Schema({
   role: String,
   address: String,
   email: String,
-  phone: String
+  phone: String,
+  sections: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'SectionModel'}]
 }, {collection: 'user'});

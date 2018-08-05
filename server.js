@@ -20,6 +20,7 @@ app.use(session({
 const mongoose = require('mongoose');
 mongoose.connect(MONGODB_URI);
 
+require('./services/section.service.server')(app);
 require('./services/user.service.server')(app);
 
 app.listen(process.env.PORT || 3001);

@@ -18,8 +18,8 @@ const findUserById = userId => {
 const findUserByIdExpanded = userId => {
   return userModel
     .findById(userId)
-    // .populate('sections')
-    // .exec();
+    .populate('sections')
+    .exec();
 };
 
 const createUser = user => {
