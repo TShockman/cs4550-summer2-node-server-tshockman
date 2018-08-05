@@ -16,14 +16,29 @@ const findById = sectionId => {
   return sectionModel.findById(sectionId);
 };
 
-const updateSection = section => {
-  return sectionModel.findByIdAndUpdate(section._id, section);
+const updateSection = newSection => {
+  return sectionModel.findById(newSection._id)
+    .then(section => {
+      // update title
+      section.title = newSection.title;
+
+      // don't update freeSeats (if it has changed it only means client is out of touch with server)
+      // don't update courseId (sections belong to courses it doesn't make sense to change)
+
+      // if max enrollment has changed, update free seats
+      if (newSection.maxEnrollment !== section.maxEnrollment) {
+        section.freeSeats += newSection.maxEnrollment - section.maxEnrollment;
+      }
+      section.maxEnrollment = newSection.maxEnrollment;
+      return section.save();
+    });
 };
 
 const deleteById = sectionId => {
   return sectionModel.deleteOne({_id: sectionId});
 };
 
+// only way to update free seats
 const enroll = (studentId, sectionId) => {
   return Promise.all([
     sectionModel.findById(sectionId),
@@ -42,6 +57,7 @@ const enroll = (studentId, sectionId) => {
     });
 };
 
+// only way to update free seats
 const unenroll = (studentId, sectionId) => {
   return Promise.all([
     sectionModel.findById(sectionId),
