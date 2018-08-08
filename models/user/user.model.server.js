@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const userSchema = require('./user.schema.server');
+const bcrypt = require('bcrypt');
 
 const userModel = mongoose.model('UserModel', userSchema);
 
@@ -8,7 +9,15 @@ const findAllUsers = () => {
 };
 
 const findUserByCredentials = (username, password) => {
-  return userModel.findOne({username, password});
+  console.log('finding user by credentials')
+  return userModel.findOne({username})
+    .then(user => {
+      console.log('found user', user);
+      if (user && bcrypt.compareSync(password, user.password)) {
+        return user;
+      }
+      return null;
+    });
 };
 
 const findUserById = userId => {
@@ -23,7 +32,14 @@ const findUserByIdExpanded = userId => {
 };
 
 const createUser = user => {
-  return userModel.create(user);
+  return userModel.findOne({username: user.username})
+    .then(result => {
+      if (result) {
+        return null;
+      }
+      user.password = bcrypt.hashSync(user.password, 10);
+      return userModel.create(user);
+    });
 };
 
 const deleteUserById = userId => {
@@ -31,7 +47,21 @@ const deleteUserById = userId => {
 };
 
 const updateUser = user => {
-  return userModel.findByIdAndUpdate(user._id, user);
+  return userModel.findById(user._id)
+    .then(dbUser => {
+      delete user.password;
+      Object.assign(dbUser, user);
+      return dbUser.save();
+    });
+};
+
+const updatePassword = user => {
+  return userModel.findById(user._id)
+    .then(dbUser => {
+      const hash = bcrypt.hashSync(user.password, 10);
+      dbUser.password = hash;
+      return dbUser.save();
+    });
 };
 
 module.exports = {
@@ -41,5 +71,6 @@ module.exports = {
   findUserByCredentials,
   createUser,
   deleteUserById,
-  updateUser
+  updateUser,
+  updatePassword
 };

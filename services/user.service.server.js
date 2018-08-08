@@ -10,8 +10,12 @@ module.exports = app => {
     const user = req.body;
     userModel.createUser(user)
       .then(newUser => {
-        req.session['currentUser'] = newUser;
-        res.send(newUser)
+        if (newUser) {
+          req.session['currentUser'] = newUser;
+          res.send(newUser)
+        } else {
+          res.sendStatus(400);
+        }
       });
   };
 
@@ -60,6 +64,17 @@ module.exports = app => {
     }
   };
 
+  const updatePassword = (req, res) => {
+    const currentUser = req.session['currentUser'];
+    const newUser = req.body;
+    if (currentUser && currentUser._id === newUser._id) {
+      userModel.updatePassword(newUser)
+        .then(updated => res.send(updated));
+    } else {
+      res.sendStatus(403);
+    }
+  };
+
   app.get('/api/user', findAllUsers);
   app.post('/api/register', createUser);
   app.post('/api/login', login);
@@ -67,4 +82,5 @@ module.exports = app => {
   app.delete('/api/profile', deleteUser);
   app.get('/api/profile', getProfile);
   app.put('/api/profile', updateProfile);
+  app.put('/api/profile/password', updatePassword)
 };
