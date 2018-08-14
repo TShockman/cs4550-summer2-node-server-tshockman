@@ -23,5 +23,7 @@ mongoose.connect(MONGODB_URI);
 require('./services/section.service.server')(app);
 require('./services/user.service.server')(app);
 require('./services/enrollment.service.server')(app);
+require('./services/quiz.service.server')(app);
+require('./services/submission.service.server')(app);
 
 app.listen(process.env.PORT || 3001);
