@@ -17,7 +17,9 @@ module.exports = app => {
   };
 
   const getAllSubmissionsForQuiz = (req, res) => {
-    res.sendStatus(400)
+    const qid = req.params['qid'];
+    submissionModel.getAllSubmissionsForQuiz(qid)
+      .then(submissions => res.send(submissions));
   };
 
   const getSubmission = (req, res) => {

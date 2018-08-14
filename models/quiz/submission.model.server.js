@@ -27,7 +27,14 @@ const getSubmission = sid => {
     .exec();
 };
 
+const getAllSubmissionsForQuiz = qid => {
+  return submissionModel.find({quiz: qid})
+    .populate('student')
+    .exec();
+};
+
 module.exports = {
   submit,
-  getSubmission
+  getSubmission,
+  getAllSubmissionsForQuiz
 };
